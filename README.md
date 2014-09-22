@@ -26,6 +26,15 @@ EasyAudio.easy_open(&EasyAudio::Waveforms::SINE)
 sleep 2 # play for 2 seconds
 ```
 
+Play a custom waveform (a cosine wave):
+
+```ruby
+require 'easy_audio'
+
+EasyAudio.easy_open { Math.cos(Math::PI * 2 * step) }
+sleep 1
+```
+
 Here's a triangle wave that increases its frequency over 3 seconds:
 
 ```ruby

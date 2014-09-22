@@ -10,6 +10,8 @@ Gem::Specification.new do |s|
   s.homepage      = "http://github.com/lsegal/easy_audio"
   s.platform      = Gem::Platform::RUBY
   s.files         = `git ls-files`.split(/\s+/)
-  s.extensions    = ['Rakefile']
-  s.license       = 'BSD'
+  s.extensions    = ["Rakefile"]
+  s.license       = "BSD"
+
+  s.add_runtime_dependency "ffi-portaudio", "~> 0.0"
 end

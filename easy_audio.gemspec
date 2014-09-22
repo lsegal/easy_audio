@@ -1,10 +1,8 @@
-require_relative "./lib/easy_audio"
-
 Gem::Specification.new do |s|
   s.name          = "easy_audio"
   s.summary       = "EasyAudio is a simplified wrapper for the portaudio library."
   s.description   = "EasyAudio allows you to play or record from your sound card."
-  s.version       = EasyAudio::VERSION
+  s.version       = File.read("lib/easy_audio.rb")[/VERSION = "(.+?)"/, 1]
   s.author        = "Loren Segal"
   s.email         = "lsegal@soen.ca"
   s.homepage      = "http://github.com/lsegal/easy_audio"

@@ -1,5 +1,7 @@
 # EasyAudio
 
+[![Gem Version](https://badge.fury.io/rb/easy_audio.svg)](http://badge.fury.io/rb/easy_audio)
+
 EasyAudio is a simplified wrapper for the [portaudio][portaudio] library, which
 allows to you play or record audio directly from your sound card.
 

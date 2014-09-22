@@ -5,12 +5,12 @@
       "files": ["lib/easy_audio.rb"],
       "arguments": {
         "search": "VERSION = ['\"](.+?)['\"]",
-        "replace": "VERSION = '$version'"
+        "replace": "VERSION = \"$version\""
       }
     },
     {
       "action": "git-commit",
-      "files": ["lib/*/version.rb"]
+      "files": ["lib/easy_audio.rb"]
     },
     {
       "action": "git-merge",

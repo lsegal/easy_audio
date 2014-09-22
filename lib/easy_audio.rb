@@ -3,7 +3,7 @@ require 'ffi-portaudio'
 # Easy Audio is a library to simplify the Portaudio interface
 # @see http://portaudio.com
 module EasyAudio
-  VERSION = "0.1.0"
+  VERSION = "0.0.0"
 
   # Represents a single buffer passed to the {Stream} process block
   class StreamPacket < Struct.new(:samples, :num_samples, :time_info, :status_info, :user_data)

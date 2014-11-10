@@ -184,7 +184,7 @@ s.add_scene :A2, [
   [nil, sn(SINE,26), nil, nil] * 2,
 ]
 s.add_scene :B, [
-  [sn(HIHAT, 70), nil, nil, nil] * 4,
+  [sn(HIHAT, 70), nil, nil, nil, sn(HIHAT, 70), nil, sn(HIHAT, 70), nil] * 2,
   [nil, nil, SNARE, nil],
   [sn(BASSDRUM, 17), nil, nil, nil, SNARE, nil, sn(BASSDRUM, 17), nil],
   [nil, sn(SQUARELEAD, 42)] * 4,
@@ -192,7 +192,7 @@ s.add_scene :B, [
   [nil, sn(SINE,23), nil, nil] * 2,
 ]
 s.add_scene :C, [
-  [sn(HIHAT, 70), nil, nil, nil] * 4,
+  [sn(HIHAT, 70), nil, nil, nil, sn(HIHAT, 70), nil, sn(HIHAT, 70), nil] * 2,
   [nil, nil, nil, nil, nil, SNARE, nil, nil, nil, nil],
   [nil, sn(SQUARELEAD, 49), nil, sn(SQUARELEAD, 49), nil, nil, nil, sn(-> { e(TRIANGLE) * 0.5 }, 54)],
   [sn(BASSDRUM, 17), nil, nil, nil, nil, nil, sn(BASSDRUM, 17), nil],

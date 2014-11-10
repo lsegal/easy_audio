@@ -1,4 +1,3 @@
-require 'thread'
 require_relative '../lib/easy_audio'
 
 def freq_for_note(note)
@@ -53,7 +52,6 @@ end
 class Sequencer
   def initialize(stream: EasyAudio::EasyStream.new(amp: 0.8, frame_size: 4096, latency: 12.0), bpm: 120)
     srand
-    @mutex = Mutex.new
     @stream = stream
     @stream.fn = method(:next_frame)
     @scene = nil
@@ -65,7 +63,6 @@ class Sequencer
     @sample = 0
     @kf = 0
     @samples_per_bar = (@stream.sample_rate * 60) / @bpm
-    @stopped = false
   end
 
   def next_frame
@@ -121,7 +118,6 @@ class Sequencer
   end
 
   def play(scenes: ['16:default'])
-    @stopped = false
     @sample = 0
     @kf = 0
     @keyframes = {}

@@ -25,6 +25,7 @@ module EasyAudio
     #
     # @option opts :sample_rate [Fixnum] (44100) the sample rate to play at.
     # @option opts :frame_size [Fixnum] (256) the number of frames per buffer.
+    # @option opts :total_secs [Float] (nil) total number of frames to play.
     # @option opts :in [Boolean] whether to use the default input device.
     # @option opts :out [Boolean] whether to use the default output device.
     # @option opts :in_chans [Fixnum] (2) the number of channels to process from
@@ -50,6 +51,9 @@ module EasyAudio
       @input_channels = opts[:in_chans] || 1
       @output_channels = opts[:out_chans] || 1
       @latency = opts[:latency] || 0.01
+      @total_frames = opts[:total_secs] ?
+        (opts[:total_secs].to_f * @sample_rate).floor : nil
+      @total_num_frames = 0
 
       input, output = nil, nil
       if opts[:in] || opts[:in_chans]
@@ -73,7 +77,14 @@ module EasyAudio
     # Don't override this function. Pass in a `process` Proc object to
     # {#initialize} instead.
     def process(input, output, frames, time_info, status, user_data)
+      if @total_frames && @total_num_frames > @total_frames
+        return :paAbort
+      else
+        @total_num_frames += frames
+      end
+
       result = run_process(input, output, frames, time_info, status, user_data)
+      return result if Symbol === result
       unless Array === result
         result = Array.new(frames * @output_channels).map {0}
       end
@@ -181,12 +192,26 @@ module EasyAudio
             result[@i] = @amp.to_f * (instance_exec(&@fn) || 0.0)
             @i += 1
           end
-          @frame = (@frame + 1) % 1000000
+          @frame += 1
         end
       else
         result = result.map {0}
       end
 
+      result
+    end
+
+    def e(fn = nil, &block)
+      instance_exec(&(fn || block))
+    end
+
+    def fr(fn = nil, freq, &block)
+      orig_freq, orig_step = @frequency, @step
+      @frequency = freq
+      @step = @frame * (@frequency / @sample_rate.to_f) % 1.0
+      result = e(fn || block)
+      @frequency = orig_freq
+      @step = orig_step
       result
     end
   end

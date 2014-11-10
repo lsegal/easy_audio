@@ -73,7 +73,13 @@ class Sequencer
       @scene = @keyframes[@kf.to_i]
     end
     @kf += 1
-    result = @rendered_scenes[@scene][@sample.to_i]
+
+    if @rendered_scenes[@scene] && @rendered_scenes[@scene][@sample.to_i]
+      result = @rendered_scenes[@scene][@sample.to_i]
+    else
+      result = calculate_frame(@scene, @sample.to_i)
+    end
+
     @sample = (@sample + 1) % @samples_per_bar.to_i
     result
   end
@@ -84,17 +90,33 @@ class Sequencer
     end
   end
 
+  def calculate_frame(name, i)
+    @rendered_scenes[name] ||= {}
+    total = 0.0
+    @scenes[name].each do |track|
+      q = @samples_per_bar.to_i / track.length
+      n = (i / q).to_i
+      step = (i.to_f / @stream.sample_rate) % 1.0
+      total += track[n] ? track[n].next_frame(i % q, step) : 0.0
+    end
+    @rendered_scenes[name][i] = total
+  end
+
   def render_scenes
     @rendered_scenes = {}
-    @keyframes.values.each do |name|
-      @rendered_scenes[name] = @samples_per_bar.to_i.times.map do |i|
-        @scenes[name].map do |track|
-          q = @samples_per_bar.to_i / track.length
-          n = (i / q).to_i
-          step = (i.to_f / @stream.sample_rate) % 1.0
-          track[n] ? track[n].next_frame(i % q, step) : 0.0
-        end.reduce(&:+)
+    @keyframes.values.uniq.each do |name|
+      reader, writer = IO.pipe
+      fork do
+        reader.close
+        data = @samples_per_bar.to_i.times.map do |i|
+          calculate_frame(name, i)
+        end
+        writer.puts(Marshal.dump(data))
       end
+
+      writer.close
+      data = Marshal.load(reader.read)
+      @rendered_scenes[name] = data
     end
   end
 
@@ -111,8 +133,8 @@ class Sequencer
       last_frame += (bars.to_i * @samples_per_bar).to_i
     end
 
-    puts "Rendering scenes..."
-    render_scenes
+    puts "Rendering scenes in background..."
+    Thread.new { render_scenes }
 
     puts "Starting audio..."
     @stream.start

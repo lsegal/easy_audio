@@ -147,7 +147,7 @@ end
 
 SINE = -> { Math.sin(2 * Math::PI * step) * 0.8 }
 SQUARE = -> { step < 0.5 ? -0.8 : 0.8 }
-TRIANGLE = -> { (1 - 4 * (step.round - step).abs) * 0.8 }
+TRIANGLE = -> { (1 - 4 * (step.round - step).abs) * 0.55 }
 SAW = -> { 2 * (step - step.round) * 0.8 }
 
 NOISE = -> { rand - 0.5 }
@@ -157,11 +157,11 @@ EXP_FALLOFF2 = -> { [(1 / (frame * 0.005)), 1.0].min }
 LIN_FALLOFF  = -> { (50000.0 - @frame) / 50000.0 }
 
 SNARE = -> { e(EXP_FALLOFF) * e(NOISE) * 0.8 }
-BASSDRUM = -> { e(EXP_FALLOFF2) * e(NOISE) * 0.1 + e(SINE) * 0.9 * e(EXP_FALLOFF) }
+BASSDRUM = -> { [1.0,e(EXP_FALLOFF2) * e(NOISE) * 0.1 + e(SINE) * 2 * e(EXP_FALLOFF)].min }
 HIHAT = -> { e(NOISE) * 0.3 * e(EXP_FALLOFF2) + e(SQUARE) * 0.1 * e(EXP_FALLOFF2) }
 
 LEAD = -> { e(TRIANGLE) * e(EXP_FALLOFF) }
-LEAD2 = -> { e(SAW) * Math.sin(step * 4.0) * 0.2 * fr(SINE,2*freq) * 0.5 + e(NOISE) * 0.2 }
+LEAD2 = -> { e(SAW) * Math.sin(step * 4.0) * 0.2 * fr(SINE,2*freq*Math.tan(step*0.005)) * 0.4 + e(NOISE) * 0.05 }
 SQUARELEAD = -> { e(SQUARE) * 0.4 * e(EXP_FALLOFF) }
 SQUARELEAD2 = -> { e(SQUARE) * 0.4 * e(EXP_FALLOFF2) }
 PHASED = -> { fr(SINE, Math.sin(@step / 4.0) * (freq / 2.0)) * 0.01 * [1.0,frame.to_f/50000.0].max }
@@ -171,14 +171,14 @@ PHASED = -> { fr(SINE, Math.sin(@step / 4.0) * (freq / 2.0)) * 0.01 * [1.0,frame
 s = Sequencer.new bpm: 43
 s.add_scene :A, [
   [nil, nil, SNARE, nil],
-  [sn(BASSDRUM, 17), nil, nil, nil],
+  [sn(BASSDRUM, 20), nil, nil, nil],
   [nil, sn(SQUARELEAD, 46)] * 4,
   [sn(LEAD, 51), nil, nil, sn(TRIANGLE,49)],
   [nil, sn(SINE,20), nil, nil] * 2,
 ]
 s.add_scene :A2, [
   [nil, nil, SNARE, nil],
-  [sn(BASSDRUM, 17), nil, nil, nil],
+  [sn(BASSDRUM, 20), nil, nil, nil],
   [nil, sn(SQUARELEAD, 46)] * 4,
   [sn(LEAD, 51), nil, nil, sn(TRIANGLE,54)],
   [nil, sn(SINE,26), nil, nil] * 2,
@@ -186,7 +186,7 @@ s.add_scene :A2, [
 s.add_scene :B, [
   [sn(HIHAT, 70), nil, nil, nil, sn(HIHAT, 70), nil, sn(HIHAT, 70), nil] * 2,
   [nil, nil, SNARE, nil],
-  [sn(BASSDRUM, 17), nil, nil, nil, SNARE, nil, sn(BASSDRUM, 17), nil],
+  [sn(BASSDRUM, 20), nil, nil, nil, SNARE, nil, sn(BASSDRUM, 20), nil],
   [nil, sn(SQUARELEAD, 42)] * 4,
   [sn(LEAD, 51), nil, nil, sn(TRIANGLE,49)],
   [nil, sn(SINE,23), nil, nil] * 2,
@@ -195,7 +195,7 @@ s.add_scene :C, [
   [sn(HIHAT, 70), nil, nil, nil, sn(HIHAT, 70), nil, sn(HIHAT, 70), nil] * 2,
   [nil, nil, nil, nil, nil, SNARE, nil, nil, nil, nil],
   [nil, sn(SQUARELEAD, 49), nil, sn(SQUARELEAD, 49), nil, nil, nil, sn(-> { e(TRIANGLE) * 0.5 }, 54)],
-  [sn(BASSDRUM, 17), nil, nil, nil, nil, nil, sn(BASSDRUM, 17), nil],
+  [sn(BASSDRUM, 20), nil, nil, nil, nil, nil, sn(BASSDRUM, 20), nil],
   [sn(LEAD, 46), sn(LEAD, 46), nil, nil],
   [nil, nil, nil, nil, nil, nil, nil, sn(TRIANGLE,42)],
   [nil, nil, nil, nil, sn(LEAD2,59), sn(LEAD2,59), nil, nil],
